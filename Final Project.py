@@ -71,11 +71,11 @@ def login_user():
               """)
         int_attempt_counter = 0
         while True:
-            global login_user
-            login_user = input("Username : ")
-            login_user = login_user.lower()
-            if login_user in list_user[0]:
-                index_username = list_user[0].index(login_user)
+            global login_username
+            login_username = input("Username : ")
+            login_username = login_username.lower()
+            if login_username in list_user[0]:
+                index_username = list_user[0].index(login_username)
                 int_attempt_counter = 0
                 break
             else:
@@ -443,7 +443,7 @@ def pay_order():
                     print("|                   S T R U K  B E L I                  |")
                     print("=========================================================")
                     print("Tanggal :",date.strftime("%x"))
-                    print("Nama Pelayan :",login_user,"\n" )
+                    print("Nama Pelayan :",login_username,"\n" )
                     length = len(order_list[0]) + 1
                     print(tabulate({'Nama Item': order_list[0], 'Quantity': order_list[1], 'Harga': order_list[2],'Total':order_list[3]}, headers="keys", tablefmt='fancy_grid', showindex = range(1,length)))
                     print("=========================================================")
@@ -527,25 +527,22 @@ while True:
 
 #Menu Awal            
 while True:
-    try:
-        menu_login()
-        choice = input("Masukkan Nomor Pilihan : ")
-        if choice == "1":
-            login_admin()
-            second_menu()
-        elif choice == "2":
-            login_user()
-            third_menu()
-        elif choice == "3":
-            create_user()
-        elif choice == "4":
-            count = int(3)
-            for i in range(count) :
-                print("program akan keluar dalam",(int(count) - i ), "detik")
-                time.sleep(1)
-            print("Selamat Tinggal")
-            sys.exit()
-        else:
-            print("Mohon Masukkan Nomor Sesuai Yang Diatas!!")
-    except:
-        print("Terjadi Kesalahan Silahkan Memilih Ulang")
+    menu_login()
+    choice = input("Masukkan Nomor Pilihan : ")
+    if choice == "1":
+        login_admin()
+        second_menu()
+    elif choice == "2":
+        login_user()
+        third_menu()
+    elif choice == "3":
+        create_user()
+    elif choice == "4":
+        count = int(3)
+        for i in range(count) :
+            print("program akan keluar dalam",(int(count) - i ), "detik")
+            time.sleep(1)
+        print("Selamat Tinggal")
+        sys.exit()
+    else:
+        print("Mohon Masukkan Nomor Sesuai Yang Diatas!!")
