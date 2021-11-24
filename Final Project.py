@@ -139,23 +139,6 @@ def create_user():
 
     print("Akun Anda Berhasil Didaftar Silahkan Login")
 
-"""def main_menu():
-    while True:
-        menu_login()
-        choice = input("Masukkan Nomor Pilihan : ")
-        if choice == "1":
-            login_admin()
-            second_menu()
-        elif choice == "2":
-            login_user()
-        elif choice == "3":
-            create_user()
-        elif choice == "4":
-            print("Selamat Tinggal")
-            sys.exit()
-        else:
-            print("Mohon Masukkan Nomor Sesuai Yang Diatas!!")"""
-
 #End Main Menu
 
 #Start Admin Menu
@@ -448,27 +431,39 @@ def read_order():
         print("Pesanan Belum Ada Silahkan Membuat Pesanan Terlebih Dahulu")
 
 def pay_order():
-    try:
-        pay = input("Apakah Anda Ingin Membayar ? (y/n) : ")
-        if len(order_list[0]) > 0:
-            import datetime
-            date = datetime.datetime.now()
-            harga_total = sum(order_list[3])
-            print("\n=========================================================")
-            print("|                   S T R U K  B E L I                  |")
-            print("=========================================================")
-            print("Tanggal :",date.strftime("%x"))
-            print("Nama Pelayan :",login_user,"\n" )
-            length = len(order_list[0]) + 1
-            print(tabulate({'Nama Item': order_list[0], 'Quantity': order_list[1], 'Harga': order_list[2],'Total':order_list[3]}, headers="keys", tablefmt='fancy_grid', showindex = range(1,length)))
-            print("=========================================================")
-            print(" Total Harga                                  :","Rp", harga_total)
-            print("=========================================================")
-            input("\nTekan Enter Untuk Membuat Pesanan Baru")
-        else:
-            print("Pesanan Belum Ada Silahkan Membuat Pesanan Terlebih Dahulu")
-    except:
-        print("Pesanan Belum Ada Silahkan Pesan Terlebih Dahulu")
+    while True:
+        try:
+            pay = input("Apakah Anda Ingin Membayar ? (y/n) : ")
+            if pay == "y":
+                if len(order_list[0]) > 0:
+                    import datetime
+                    date = datetime.datetime.now()
+                    harga_total = sum(order_list[3])
+                    print("\n=========================================================")
+                    print("|                   S T R U K  B E L I                  |")
+                    print("=========================================================")
+                    print("Tanggal :",date.strftime("%x"))
+                    print("Nama Pelayan :",login_user,"\n" )
+                    length = len(order_list[0]) + 1
+                    print(tabulate({'Nama Item': order_list[0], 'Quantity': order_list[1], 'Harga': order_list[2],'Total':order_list[3]}, headers="keys", tablefmt='fancy_grid', showindex = range(1,length)))
+                    print("=========================================================")
+                    print(" Total Harga                                  :","Rp", harga_total)
+                    print("=========================================================")
+                    order_list[0].clear()
+                    order_list[1].clear()
+                    order_list[2].clear()
+                    order_list[3].clear()
+                    input("\nTekan Enter Untuk Membuat Pesanan Baru")
+                    break
+                else:
+                    print("Pesanan Belum Ada Silahkan Membuat Pesanan Terlebih Dahulu")
+                    break
+            elif pay == "n":
+                break
+            else:
+                continue
+        except:
+            print("Pesanan Belum Ada Silahkan Pesan Terlebih Dahulu")
 
 
 
