@@ -313,12 +313,16 @@ def report():
             break
         else:
             print("""
-    Pilih Proses 
-    1. Melihat Laporan Penjualan
-    2. Mereset Laporan Penjualan
+Pilih Proses 
+1. Melihat Laporan Penjualan
+2. Mereset Laporan Penjualan
         """)
             choice = input("Masukkan Nomor Pilihan : ")
             if choice == "1":
+                print("""
+                ==================================
+                        LAPORAN PENJUALAN
+                ==================================""")
                 length = len(report_list[0]) + 1
                 print(tabulate({'Nama': report_list[0], 'Stock Terjual': report_list[1], 'Harga Beli': report_list[4],'Harga Jual':report_list[5]}, headers="keys", tablefmt='fancy_grid', showindex = range(1,length)))
                 if sum(report_list[4]) > sum(report_list[5]):
