@@ -3,12 +3,14 @@ import time
 import sys
 import json
 from tabulate import tabulate
+import os
 
 #List Inventory
-order_list = [[],[],[],[]]
-report_list = [[],[],[],[]]
 
 #Start Main Menu
+def reset():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
 def menu_login():
     print("""
 ==================================
@@ -304,6 +306,38 @@ def read_inventory():
     else:
         print("Data Inventory Kosong Silahkan Mengisi Inventory Terlebih Dahulu")
 
+def report():
+    while True:
+        if len(report_list[0]) < 1:
+            print("Penjualan Belum Pernah Dilakukan")
+            break
+        else:
+            print("""
+    Pilih Proses 
+    1. Melihat Laporan Penjualan
+    2. Mereset Laporan Penjualan
+        """)
+            choice = input("Masukkan Nomor Pilihan : ")
+            if choice == "1":
+                length = len(report_list[0]) + 1
+                print(tabulate({'Nama': report_list[0], 'Stock Terjual': report_list[1], 'Harga Beli': report_list[4],'Harga Jual':report_list[5]}, headers="keys", tablefmt='fancy_grid', showindex = range(1,length)))
+                if sum(report_list[4]) > sum(report_list[5]):
+                    print("Anda Mengalami Rugi Sebesar Rp", sum(report_list[4]) - sum(report_list[5]))
+                elif sum(report_list[5]) > sum(report_list[4]):
+                    print("Anda Mendapatkan Untung Sebesar Rp", sum(report_list[5]) - sum(report_list[4]))
+                input("Tekan Enter Untuk Kembali")
+                break
+            elif choice == "2":
+                report_list[0].clear()
+                report_list[1].clear()
+                report_list[2].clear()
+                report_list[3].clear()
+                report_list[4].clear()
+                report_list[5].clear()
+                break
+            else :
+                print("Mohon Masukkan Nomor Proses Sesuai Yang Tertera")
+
 def second_menu():
     while True:
         with open("inventory.json", 'w') as f:
@@ -319,7 +353,7 @@ def second_menu():
         elif choice == "4":
             read_inventory()
         elif choice == "5":
-            print("Belum Ada")
+            report()
         elif choice == "6":
             break
         else:
@@ -361,11 +395,26 @@ def create_order():
                         inventory_list[1][index_menu] = (inventory_list[1][index_menu]) - (qty_order)
                         order_list[2].append(inventory_list[3][index_menu])
                         order_list[3].append((inventory_list[3][index_menu] * qty_order))
+                        if inventory_list[0][index_menu] not in report_list[0]:
+                            report_list[0].append(inventory_list[0][index_menu])
+                            report_list[1].append(qty_order)
+                            report_list[2].append(inventory_list[2][index_menu])
+                            report_list[3].append(inventory_list[3][index_menu])
+                            report_list[4].append((inventory_list[2][index_menu] * qty_order))
+                            report_list[5].append((inventory_list[3][index_menu] * qty_order))
+                        else:
+                            index_report = report_list[0].index(inventory_list[0][index_menu])
+                            report_list[1][index_report] = report_list[1][index_report] + qty_order
+                            report_list[4][index_report] = (report_list[4][index_report]) + (inventory_list[2][index_menu] * qty_order)
+                            report_list[5][index_report] = (report_list[5][index_report]) + (inventory_list[3][index_menu] * qty_order)
+
                         repeat = input("Apakah Ingin Memesan Lagi? (y/n) : ")
                         with open("inventory.json", 'w') as f:
                             json.dump(inventory_list, f) 
                         with open("order.json", 'w') as f:
                             json.dump(order_list, f)
+                        with open("report.json", 'w') as f:
+                            json.dump(report_list, f)
                         if repeat == "y":
                             continue
                         else:
@@ -375,10 +424,25 @@ def create_order():
                         order_list[1][index_order] = order_list[1][index_order] + qty_order
                         inventory_list[1][index_menu] = (inventory_list[1][index_menu]) - (qty_order)
                         order_list[3][index_order] = (order_list[3][index_order]) + (inventory_list[3][index_menu] * qty_order)
+                        if inventory_list[0][index_menu] not in report_list[0]:
+                            report_list[0].append(inventory_list[0][index_menu])
+                            report_list[1].append(qty_order)
+                            report_list[2].append(inventory_list[2][index_menu])
+                            report_list[3].append(inventory_list[3][index_menu])
+                            report_list[4].append((inventory_list[2][index_menu] * qty_order))
+                            report_list[5].append((inventory_list[3][index_menu] * qty_order))
+                        else:
+                            index_report = report_list[0].index(inventory_list[0][index_menu])
+                            report_list[1][index_report] = report_list[1][index_report] + qty_order
+                            report_list[4][index_report] = (report_list[4][index_report]) + (inventory_list[2][index_menu] * qty_order)
+                            report_list[5][index_report] = (report_list[5][index_report]) + (inventory_list[3][index_menu] * qty_order)
+
                         with open("inventory.json", 'w') as f:
                             json.dump(inventory_list, f) 
                         with open("order.json", 'w') as f:
                             json.dump(order_list, f)
+                        with open("report.json", 'w') as f:
+                            json.dump(report_list, f)
                         repeat = input("Apakah Ingin Memesan Lagi? (y/n) : ")
                         if repeat == "y":
                             continue
@@ -403,6 +467,19 @@ def delete_order():
                     qty_return = inventory_list[0].index(order_list[0][index_hapus])
                     confirm = input("Apakah Anda Yakin Ingin Menghapus? (y/n) : ")
                     if confirm == "y":
+                        index_report = report_list[0].index(order_list[0][index_hapus])
+                        if report_list[1][index_report] == order_list[1][index_hapus]:
+                            del report_list[0][index_report]
+                            del report_list[1][index_report]
+                            del report_list[2][index_report]
+                            del report_list[3][index_report]
+                            del report_list[4][index_report]
+                            del report_list[5][index_report]
+                        else: 
+                            report_list[1][index_report] = report_list[1][index_report] - order_list[1][index_hapus]
+                            report_list[4][index_report] = report_list[4][index_report] - (order_list[1][index_hapus] * inventory_list[2][qty_return])
+                            report_list[5][index_report] = report_list[5][index_report] - (order_list[1][index_hapus] * inventory_list[3][qty_return])
+
                         inventory_list[1][qty_return] = inventory_list[1][qty_return] + order_list[1][index_hapus]
                         del order_list[0][index_hapus]
                         del order_list[1][index_hapus]
@@ -412,6 +489,8 @@ def delete_order():
                             json.dump(order_list, f)
                         with open("inventory.json", 'w') as f:
                             json.dump(inventory_list, f) 
+                        with open("report.json", "w") as f:
+                            json.dump(report_list, f)
                         break
                     else :
                         print("Anda Akan Kembali Ke Menu Sebelumnya")
@@ -495,6 +574,8 @@ while True:
             list_user = json.load(f)
         with open("order.json", 'r') as f:
             order_list = json.load(f)
+        with open("report.json",'r') as f:
+            report_list = json.load(f)
         
         break
     except:
@@ -502,6 +583,7 @@ while True:
         list_admin = [[],[]]
         list_user = [[],[]]
         order_list = [[],[],[],[]]
+        report_list = [[],[],[],[],[],[]]
 
         print("""
         ==================================
@@ -524,6 +606,8 @@ while True:
             json.dump(list_user, f)
         with open("order.json", 'w') as f:
             json.dump(order_list, f)
+        with open("report.json",'w') as f:
+            json.dump(report_list,f)
 
 #Menu Awal            
 while True:
